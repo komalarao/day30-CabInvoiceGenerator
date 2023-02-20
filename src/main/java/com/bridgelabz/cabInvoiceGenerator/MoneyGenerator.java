@@ -4,7 +4,7 @@ public class MoneyGenerator {
 	private static final double MIN_COST_PER_KILOMETER = 10;
 	private static final double COST_FOR_TIME = 1;
 	private static final double MINIMUM_AMOUNT = 5;
-
+	private RideRepository rideRepository;
 	public double travelCost(double distance, double time) {
 		double cost = distance * MIN_COST_PER_KILOMETER + time * COST_FOR_TIME;
 		if (cost < MINIMUM_AMOUNT)
@@ -20,10 +20,19 @@ public class MoneyGenerator {
 		return cost;
 	}
 
-	public  EnhancedInVoice calculateFareDescription(Ride[] rides) {
-        double cost = 0;
-        for (Ride ride : rides) {
-            cost = cost + this.travelCost(ride.distance, ride.time);
-        }
-        return new EnhancedInVoice(rides.length, cost,avgFare);
+	public EnhancedInVoice calculateFareDescription(Ride[] rides) {
+		double cost = 0;
+		for (Ride ride : rides) {
+			cost = cost + this.travelCost(ride.distance, ride.time);
+		}
+		return new EnhancedInVoice(rides.length, cost, avgFare);
 	}
+
+	public EnhancedInVoice getInvoiceDescription(String userId) {
+		return this.calculateFareDescription(rideRepository.getRides(userId));
+	}
+
+	public void addRides(String userId, Ride[] rides) {
+		rideRepository.addRides(userId, rides);
+	}
+}
