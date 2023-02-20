@@ -4,56 +4,72 @@ import org.junit.*;
 
 public class MoneyGeneratorTest {
 
-	MoneyGenerator invoiceGenerator = new MoneyGenerator();
+	InvoiceGenerator  invoiceGenerator = new InvoiceGenerator();
+    @BeforeClass
+    public static void printBeforeAllMsg() {
+        System.out.println("-------Welcome to the Cab Invoice Generator Program-------");
+    }
+    @After
+    public void PrintAfterEachTestCasePass(){
+        System.out.println("passed");
+    }
+    @Test
+    public void givenDistanceAndTime_shouldReturnCalculateFareForNormalRide() {
+        double distance = 2.0;
+        int time = 5;
+        double fare = invoiceGenerator.calculateFareForRideType(distance, time, true);
+        Assert.assertEquals(25.0, fare, 0.0);
+    }
 
-	@Before
-	public void printBeforeAllMsg() {
-		System.out.println("-------Welcome to the Cab Invoice Generator Program-------");
-	}
+    @Test
+    public void givenDistanceAndTime_shouldReturnCalculateFalseFareForPremiumRide() {
+        double distance = 2.0;
+        int time = 5;
+        double fare = invoiceGenerator.calculateFareForRideType(distance, time, false);
+        Assert.assertEquals(40.0, fare, 0.0);
+    }
 
-	@After
-	public void PrintAfterEachTestCasePass() {
-		System.out.println("passed");
-	}
+    @Test
+    public void givenRides_shouldReturnInvoiceCostForNormalRide() {
 
-	@Test
-	public void givenDistanceAndTime_shouldReturn_CalculateFare() {
-		double distance = 2.0;
-		double time = 5.0;
-		double fare = invoiceGenerator.travelCost(distance, time);
-		Assert.assertEquals(25.0, fare, 0);
-	}
+        Ride[] rides = { new Ride(2.0, 5, true), new Ride(0.1, 1, true) };
+        double fare = invoiceGenerator.calculateFareForMultipleRides(rides, true);
+        Assert.assertEquals(30.0, fare, 0.0);
+    }
 
-	@Test
-	public void givenLessDistanceAndTime_shouldReturn_MinimumCalculateFare() {
-		double distance = 0.1;
-		double time = 1;
-		double fare = invoiceGenerator.travelCost(distance, time);
-		Assert.assertEquals(5, fare, 0);
-	}
+    @Test
+    public void givenRides_shouldReturnInvoiceCostForPremiumRide() {
 
-	@Test
-	public void givenMultipleRides_shouldReturn_invoiceCost() {
-		Ride[] rides = { new Ride(4, 25), new Ride(10, 60) };
-		double fare = invoiceGenerator.calculateFareForMultipleRides(rides);
-		Assert.assertEquals(225.0, fare, 0);
-	}
+        Ride[] rides = { new Ride(2.0, 5, false), new Ride(0.1, 1, false) };
+        double fare = invoiceGenerator.calculateFareForMultipleRides(rides, false);
+        Assert.assertEquals(60.0, fare, 0.0);
+    }
 
-	@Test
-	public void givenMultipleRides_shouldReturn_invoiceSummary() {
-		Ride[] rides = { new Ride(2.0, 5), new Ride(0.1, 1) };
-		EnhancedInVoice actualDescription = invoiceGenerator.calculateFareDescription(rides);
-		EnhancedInVoice expectedDescription = new EnhancedInVoice(2, 30.0, 2.0);
-		Assert.assertEquals(expectedDescription, actualDescription);
-	}
+    @Test
+    public void givenMultipleRides_shouldReturnInvoiceDescriptionForNormalRide() {
+        Ride[] rides = { new Ride(2.0, 5, true), new Ride(0.1, 1, true) };
+        InVoiceDescription actualDescription = invoiceGenerator.calculateFareDescription(rides, true);
+        InVoiceDescription expectedDescription = new InVoiceDescription(2, 30.0, true);
+        Assert.assertEquals(expectedDescription, actualDescription);
+    }
 
-	@Test
-	public void givenUserId_shouldReturn_invoiceDescriptionList() {
-		String userId = "abc@gmail.com";
-		Ride[] rides = { new Ride(2.0, 5), new Ride(0.1, 1) };
-		invoiceGenerator.addRides(userId, rides);
-		EnhancedInVoice actualDescription = invoiceGenerator.getInvoiceDescription(userId);
-		EnhancedInVoice expectedDescription = new EnhancedInVoice(2, 30.0, 2.0);
-		Assert.assertEquals(expectedDescription, actualDescription);
-	}
+    @Test
+    public void givenMultipleRides_shouldReturnInvoiceDescriptionForPremiumRide() {
+        Ride[] rides = { new Ride(2.0, 5, false), new Ride(0.1, 1, false) };
+        InVoiceDescription actualDescription = invoiceGenerator.calculateFareDescription(rides, false);
+        InVoiceDescription expectedDescription = new InVoiceDescription(2, 60.0, false);
+        Assert.assertEquals(expectedDescription, actualDescription);
+    }
+
+    @Test
+    public void givenUserId_shouldReturnInvoiceDescriptionListForNormalRide() {
+        String userId = "abc@gmail.com";
+        Ride[] rides = { new Ride(2.0, 5, true), new Ride(0.1, 1, true) };
+        invoiceGenerator.addRides("abc@gmail.com", rides, true);
+        Ride[] rides1 = { new Ride(2.0, 5, true), new Ride(0.1, 1, true) };
+        invoiceGenerator.addRides(userId, rides1, true);
+        InVoiceDescription actualDescription = invoiceGenerator.getInvoiceDescription(userId, true);
+        InVoiceDescription expectedDescription = new InVoiceDescription(2, 30.0, true);
+        Assert.assertEquals(expectedDescription, actualDescription);
+    }
 }

@@ -1,14 +1,16 @@
 package com.bridgelabz.cabInvoiceGenerator;
 
-public class EnhancedInVoice {
+public class InVoiceDescription {
 	public int totalNoOfRide;
     public double fare;
     public double avgFare;
+    public boolean normalRide;
 
-    public EnhancedInVoice(int totalNoOfRide, double fare, double avgFare) {
+    public InVoiceDescription(int totalNoOfRide, double fare, boolean normalRide) {
         this.totalNoOfRide = totalNoOfRide;
         this.fare = fare;
         this.avgFare = avgFare;
+        this.normalRide = normalRide;
     }
 
     @Override
@@ -19,11 +21,23 @@ public class EnhancedInVoice {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        EnhancedInVoice other = (EnhancedInVoice) obj;
+        InVoiceDescription other = (InVoiceDescription) obj;
         if (Double.doubleToLongBits(fare) != Double.doubleToLongBits(other.fare))
             return false;
         if (totalNoOfRide != other.totalNoOfRide)
             return false;
         return true;
+
     }
-}
+
+    @Override
+    public String toString() {
+        return "InvoiceDescription{" +
+                "totalNoOfRide=" + totalNoOfRide +
+                ", fare=" + fare +
+                ", avgFare=" + avgFare +
+                ", normalRide=" + normalRide +
+                '}';
+    }
+    }
+
